@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIP NEW YEAR 2026 - FORTUNE TELLER</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;800&family=Orbitron:wght@500&display=swap" rel="stylesheet">
+    <title>VIP NEW YEAR 2026 - THE ULTIMATE FORTUNE TELLER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600;800&family=Orbitron:wght@500;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
             --gold: #FFD700;
+            --dark-gold: #B8860B;
             --red: #D2042D;
-            --bg: #020202;
-            --glass: rgba(20, 20, 20, 0.8);
-            --neon-blue: #00f3ff;
-            --neon-pink: #bc13fe;
+            --dark-red: #8B0000;
+            --bg: #050505;
+            --text-glow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,240 +21,497 @@
             background: var(--bg);
             color: #fff;
             font-family: 'Montserrat', sans-serif;
-            overflow: hidden; /* Chặn thanh cuộn */
+            overflow: hidden;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* --- CANVAS PHÁO HOA --- */
+        /* --- BACKGROUND & CANVAS --- */
         #canvas {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 0;
             filter: contrast(1.2) brightness(1.2);
+            opacity: 0.6;
         }
 
-        /* --- MÀN HÌNH CHÀO MỪNG (NHẬP TÊN) --- */
+        .stars {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        /* --- WELCOME SCREEN --- */
         #welcome-screen {
             position: absolute;
             z-index: 100;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at center, rgba(20,0,0,0.9) 0%, rgba(0,0,0,1) 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 1s ease;
+            transition: opacity 1.5s ease;
         }
 
         .input-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 40px;
+            background: rgba(20, 20, 20, 0.8);
+            padding: 50px 40px;
             border-radius: 20px;
-            border: 1px solid var(--gold);
-            backdrop-filter: blur(10px);
+            border: 1px solid var(--dark-gold);
+            backdrop-filter: blur(15px);
             text-align: center;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.15), inset 0 0 20px rgba(255, 215, 0, 0.05);
             max-width: 90%;
-            width: 400px;
+            width: 450px;
             transform: scale(1);
             transition: transform 0.3s;
         }
-        
+
         .input-box:hover { transform: scale(1.02); }
 
         .input-box h2 {
             font-family: 'Dancing Script', cursive;
             color: var(--gold);
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+            font-size: 3.5rem;
+            margin-bottom: 5px;
+            text-shadow: var(--text-glow);
         }
 
-        .form-group { margin-bottom: 20px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 5px; color: #aaa; font-size: 0.9rem; }
+        .input-box p.subtitle {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .form-group { margin-bottom: 25px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--gold); font-size: 0.9rem; font-weight: 600; letter-spacing: 1px;}
         
         input {
             width: 100%;
-            padding: 12px;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid #333;
-            border-radius: 5px;
+            padding: 15px;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid #444;
+            border-radius: 8px;
             color: #fff;
-            font-size: 1rem;
+            font-size: 1.1rem;
             outline: none;
             transition: 0.3s;
+            font-family: 'Montserrat', sans-serif;
         }
-        input:focus { border-color: var(--gold); box-shadow: 0 0 10px var(--gold); }
+        input:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+
+        /* Chỉnh style cho thẻ input date */
+        ::-webkit-calendar-picker-indicator {
+            filter: invert(1) sepia(100%) saturate(10000%) hue-rotate(30deg);
+            cursor: pointer;
+        }
 
         button.btn-start {
             width: 100%;
-            padding: 15px;
-            background: linear-gradient(45deg, var(--red), #800000);
-            border: none;
+            padding: 18px;
+            background: linear-gradient(45deg, var(--red), var(--dark-red));
+            border: 1px solid #ff4d4d;
             color: white;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-radius: 5px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            border-radius: 8px;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 0 15px var(--red);
-            transition: 0.3s;
+            letter-spacing: 3px;
+            box-shadow: 0 0 20px rgba(210, 4, 45, 0.5);
+            transition: all 0.4s ease;
+            margin-top: 10px;
         }
         button.btn-start:hover {
-            background: linear-gradient(45deg, #800000, var(--red));
-            box-shadow: 0 0 30px var(--red);
-            transform: translateY(-2px);
+            background: linear-gradient(45deg, var(--dark-red), var(--red));
+            box-shadow: 0 0 40px rgba(210, 4, 45, 0.8);
+            transform: translateY(-3px);
         }
 
-        /* --- MÀN HÌNH CHÍNH --- */
+        /* --- MAIN SCREEN --- */
         #main-screen {
-            display: none; /* Ẩn mặc định */
+            display: none;
             position: relative;
             z-index: 10;
             text-align: center;
             width: 100%;
-            max-width: 800px;
+            height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             opacity: 0;
             animation: fadeIn 2s forwards;
         }
 
         @keyframes fadeIn { to { opacity: 1; } }
 
+        .header-info {
+            margin-bottom: 20px;
+            z-index: 20;
+        }
+
         .vip-name {
             font-family: 'Dancing Script', cursive;
-            font-size: 4rem;
+            font-size: 4.5rem;
             background: linear-gradient(to right, #fff, var(--gold), #fff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255,215,0,0.5);
+            text-shadow: 0 0 30px rgba(255,215,0,0.6);
             margin-bottom: 10px;
+            line-height: 1.2;
         }
 
-        .element-badge {
+        .badges-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .badge {
             display: inline-block;
-            padding: 5px 20px;
+            padding: 8px 25px;
             border: 1px solid var(--gold);
             border-radius: 50px;
             color: var(--gold);
             text-transform: uppercase;
             font-size: 0.9rem;
+            font-weight: 600;
+            background: rgba(0,0,0,0.8);
+            letter-spacing: 2px;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .zodiac-badge {
+            border-color: #00f3ff;
+            color: #00f3ff;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        /* KHUNG CUỘN CHỨA TEXT SIÊU DÀI */
+        .wish-container {
+            background: rgba(10, 10, 10, 0.85);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(255,215,0,0.05);
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 60vh;
+            overflow-y: auto;
+            text-align: left;
+            scroll-behavior: smooth;
+            z-index: 20;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Tuỳ chỉnh thanh cuộn */
+        .wish-container::-webkit-scrollbar { width: 8px; }
+        .wish-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); border-radius: 10px; }
+        .wish-container::-webkit-scrollbar-thumb { background: var(--dark-gold); border-radius: 10px; }
+        .wish-container::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+        /* Typography cho nội dung bói */
+        .content-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease;
             margin-bottom: 30px;
-            background: rgba(0,0,0,0.6);
+        }
+        
+        .content-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .poem {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.4rem;
+            color: var(--gold);
+            text-align: center;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            padding: 20px;
+            border-top: 1px solid rgba(255,215,0,0.2);
+            border-bottom: 1px solid rgba(255,215,0,0.2);
+            background: rgba(255,215,0,0.02);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--red);
+            font-size: 1.5rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #444;
+            padding-bottom: 10px;
+            text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        .wish-container {
-            background: rgba(0, 0, 0, 0.6);
-            padding: 30px;
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            position: relative;
-            overflow: hidden;
-            min-height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .zodiac-title { color: #00f3ff; }
 
-        .wish-container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 15px;
-            box-shadow: inset 0 0 20px var(--gold);
-            opacity: 0.3;
-            pointer-events: none;
-        }
-
-        #typewriter-text {
+        .paragraph {
             font-family: 'Montserrat', sans-serif;
-            font-size: 1.4rem;
-            line-height: 1.6;
-            color: #fff;
-            font-weight: 400;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #ddd;
+            margin-bottom: 15px;
+            text-align: justify;
         }
+
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .month-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .month-card h4 {
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+        }
+
+        .month-card p {
+            font-size: 0.95rem;
+            color: #ccc;
+            line-height: 1.5;
+        }
+
+        .highlight { color: #fff; font-weight: bold; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
 
         .year-display {
             font-family: 'Orbitron', sans-serif;
-            font-size: 6rem;
+            font-size: 15vw;
             font-weight: 900;
-            color: rgba(255,255,255,0.05);
+            color: rgba(255, 215, 0, 0.03);
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            z-index: -1;
+            z-index: 1;
             pointer-events: none;
             white-space: nowrap;
         }
 
-        .control-panel {
-            margin-top: 30px;
-        }
+        .control-panel { margin-top: 20px; z-index: 20; }
 
         .btn-restart {
-            background: transparent;
-            border: 1px solid #fff;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #555;
             color: #fff;
-            padding: 10px 20px;
+            padding: 12px 30px;
             border-radius: 30px;
             cursor: pointer;
             transition: 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 1px;
         }
         .btn-restart:hover { background: #fff; color: #000; }
 
         /* Responsive */
-        @media (max-width: 600px) {
-            .vip-name { font-size: 2.5rem; }
-            #typewriter-text { font-size: 1.1rem; }
-            .year-display { font-size: 4rem; }
+        @media (max-width: 768px) {
+            .vip-name { font-size: 3rem; }
+            .wish-container { height: 70vh; padding: 20px; }
+            .poem { font-size: 1.2rem; }
+            .badges-container { flex-direction: column; gap: 10px; align-items: center; }
+            .year-display { font-size: 30vw; }
         }
     </style>
 </head>
 <body>
 
+    <div class="stars" id="stars"></div>
     <canvas id="canvas"></canvas>
 
     <div id="welcome-screen">
         <div class="input-box">
-            <h2>Gieo Quẻ Đầu Năm</h2>
+            <h2>Thiên Cơ 2026</h2>
+            <p class="subtitle">Bói Quẻ Đầu Năm - Luận Giải Chi Tiết</p>
             <div class="form-group">
-                <label>Quý danh của bạn:</label>
-                <input type="text" id="userName" placeholder="Ví dụ: Hoàng Tuấn" autocomplete="off">
+                <label>Họ và Tên của bạn:</label>
+                <input type="text" id="userName" placeholder="VD: Nguyễn Văn A" autocomplete="off">
             </div>
             <div class="form-group">
-                <label>Năm sinh (Dương lịch):</label>
-                <input type="number" id="birthYear" placeholder="Ví dụ: 1998" min="1900" max="2026">
+                <label>Ngày Tháng Năm Sinh (Dương Lịch):</label>
+                <input type="date" id="birthDate" required>
             </div>
-            <button class="btn-start" onclick="startExperience()">Xem Lời Chúc VIP</button>
+            <button class="btn-start" onclick="startExperience()">Mở Bát Thiên Cơ</button>
         </div>
-        <p style="margin-top: 20px; font-size: 0.8rem; color: #666;">Nhập năm sinh để AI tính mệnh Ngũ Hành</p>
     </div>
 
-    <div id="main-screen">
+    <div id="main-screen" style="display: none;">
         <div class="year-display">2026</div>
-        <h1 class="vip-name" id="display-name">Chào Bạn</h1>
-        <div class="element-badge" id="display-element">MỆNH: ...</div>
+        
+        <div class="header-info">
+            <h1 class="vip-name" id="display-name">...</h1>
+            <div class="badges-container">
+                <div class="badge" id="display-element">Mệnh: ...</div>
+                <div class="badge zodiac-badge" id="display-zodiac">Cung: ...</div>
+            </div>
+        </div>
 
-        <div class="wish-container">
-            <p id="typewriter-text"></p>
+        <div class="wish-container" id="scroll-box">
+            <div id="content-wrapper">
+                </div>
         </div>
 
         <div class="control-panel">
-            <button class="btn-restart" onclick="location.reload()">↺ Nhập lại thông tin</button>
+            <button class="btn-restart" onclick="location.reload()">↺ Xem cho người khác</button>
         </div>
     </div>
 
     <script>
-        // --- 1. FIREWORKS ENGINE (PHYSICS NÂNG CAO) ---
+        // ==========================================
+        // PHẦN 1: CƠ SỞ DỮ LIỆU KHỔNG LỒ (TẠO RA HÀNG TRĂM DÒNG TEXT)
+        // ==========================================
+
+        // DỮ LIỆU NGŨ HÀNH (MỆNH) - Chi tiết cực sâu
+        const elementData = {
+            "KIM": {
+                poem: "Trăm năm tôi luyện hóa thành vàng<br>Vượt qua giông bão chí hiên ngang<br>Bính Ngọ năm nay thời vận tới<br>Công danh rạng rỡ, bạc tiền mang.",
+                general: "Bản mệnh Kim tượng trưng cho sự cứng rắn, sắc sảo và kỷ luật. Bước sang năm Bính Ngọ 2026 (năm Hỏa), dù Hỏa khắc Kim, nhưng với tư chất của bạn, đây lại là 'Lửa thử vàng'. Năm nay là lúc bạn được tôi luyện để trở nên sắc bén và giá trị hơn bao giờ hết. Sự nghiệp sẽ có những bước ngoặt lớn đòi hỏi sự quyết đoán. Đừng ngại thay đổi, vì chính áp lực sẽ tạo ra kim cương.",
+                career: "Về công danh sự nghiệp, năm 2026 đánh dấu một thời kỳ bạn phải đối mặt với nhiều thử thách từ cấp trên hoặc đối tác. Tuy nhiên, khả năng giải quyết vấn đề của bạn sẽ được phát huy tối đa. Giữa năm, một cơ hội thăng tiến bất ngờ sẽ xuất hiện. Lời khuyên cho bạn là hãy rèn luyện kỹ năng mềm, bớt đi sự cứng nhắc, uyển chuyển như nước để thu phục nhân tâm. Tiền tài rủng rỉnh vào nửa cuối năm, đặc biệt là các khoản đầu tư dài hạn.",
+                love_health: "Tình duyên có sự khởi sắc mạnh mẽ. Người độc thân dễ gặp được tri kỷ qua công việc. Người có gia đình cần chú ý nhẫn nhịn, tránh cãi vã vì cái tôi quá cao. Về sức khỏe, cần chú ý các bệnh liên quan đến đường hô hấp, phổi và xương khớp. Hãy dành thời gian thiền định hoặc tập yoga để cân bằng lại nội tâm cứng rắn của mình."
+            },
+            "MỘC": {
+                poem: "Như cây đại thụ giữa ngàn mây<br>Rễ cắm thật sâu, lộc trĩu đầy<br>Mưa thuận gió hòa năm Bính Ngọ<br>Phúc lộc thăng hoa, rạng rỡ thay.",
+                general: "Mệnh Mộc là biểu tượng của sự sinh sôi, nảy nở và lòng nhân ái. Năm 2026 là năm Mộc gặp môi trường thuận lợi để vươn cao. Mọi sự nỗ lực ươm mầm từ những năm trước nay đã đến lúc đơm hoa kết trái. Năng lượng sinh học của bạn rất vượng, giúp bạn luôn tỏa ra sự tích cực, thu hút quý nhân và những cơ hội tuyệt vời. Hãy giữ vững sự bao dung và tầm nhìn xa trông rộng của mình.",
+                career: "Sự nghiệp thăng hoa rực rỡ. Bạn sẽ nhận được nhiều sự giúp đỡ từ đồng nghiệp và cấp trên (quý nhân phù trợ). Những ý tưởng sáng tạo bị kìm hãm bấy lâu nay sẽ được công nhận và mang lại giá trị tài chính lớn. Khởi nghiệp hoặc mở rộng kinh doanh trong năm nay vô cùng thuận lợi. Tiền bạc chảy vào túi đều đặn, đặc biệt từ tháng 3 đến tháng 8 âm lịch. Tuy nhiên, đừng quá tin người mà vung tay quá trán.",
+                love_health: "Tình duyên êm ấm, nở hoa. Cây cối cần nước để xanh tươi, bạn cũng cần sự tưới tắm của tình yêu. Năm nay rất thích hợp để tiến tới hôn nhân hoặc sinh con. Gia đạo bình an, tràn ngập tiếng cười. Sức khỏe dồi dào, nhưng cần chú ý gan và hệ tiêu hóa. Hạn chế thức khuya và rượu bia, ăn nhiều rau xanh để giữ mộc khí luôn thanh sạch."
+            },
+            "THỦY": {
+                poem: "Nước chảy đá mòn, trí uyên thâm<br>Uyển chuyển vượt qua vạn thăng trầm<br>Năm mới vươn mình ra biển lớn<br>Cá chép hóa rồng, sấm vang ngân.",
+                general: "Mệnh Thủy mang trong mình sự linh hoạt, thông tuệ và sâu sắc. Nước có thể hiền hòa nuôi dưỡng vạn vật, nhưng cũng có thể cuộn trào mạnh mẽ. Năm 2026, dòng chảy vận mệnh của bạn sẽ rất tốc độ. Sẽ có nhiều sự xê dịch, thay đổi chỗ ở hoặc nơi làm việc. Bạn cần giữ tâm thế 'tùy cơ ứng biến'. Càng linh hoạt, bạn càng thu gom được nhiều tài lộc từ khắp bốn phương.",
+                career: "Đây là một năm bận rộn và phải di chuyển nhiều. Kinh doanh liên quan đến giao thương, xuất nhập khẩu, logistics, hoặc làm việc trên môi trường internet sẽ thắng lớn. Tài vận hanh thông, tiền vào như nước bôn ba. Sẽ có những lúc bạn cảm thấy áp lực vì khối lượng công việc khổng lồ, nhưng hãy nhớ bản chất của nước là không bao giờ lùi bước trước vật cản, nó luôn tìm được đường đi. Đỉnh cao tài chính rơi vào mùa Đông 2026.",
+                love_health: "Đời sống tình cảm phong phú và lãng mạn. Tuy nhiên, vì tính cách đào hoa và hay di chuyển, người có đôi có cặp cần chú ý vun đắp, tránh xa mặt cách lòng. Người độc thân dễ có những cuộc tình chớp nhoáng nhưng khó bền, cần dùng lý trí để nhìn nhận. Sức khỏe cần lưu ý vùng thận và bàng quang. Hãy uống đủ nước và giữ ấm cơ thể khi thời tiết chuyển mùa."
+            },
+            "HỎA": {
+                poem: "Lửa đỏ bùng lên sáng góc trời<br>Nhiệt huyết đam mê chẳng đánh rơi<br>Bính Ngọ tương phùng ngàn cơ hội<br>Công thành danh toại, thảnh thơi cười.",
+                general: "Mệnh Hỏa đại diện cho nhiệt huyết, năng lượng, danh vọng và sự bùng nổ. Năm Bính Ngọ 2026 cũng là một năm mang nhiều hỏa khí. Sự đồng thanh tương ứng này giúp ngọn lửa trong bạn bùng cháy mạnh mẽ hơn bao giờ hết. Đây là năm của sự tỏa sáng, của việc khẳng định tên tuổi và cái tôi cá nhân. Tuy nhiên, lửa quá vượng dễ dẫn đến bốc đồng, hãy học cách kiểm soát ngọn lửa để sưởi ấm chứ đừng thiêu rụi mọi thứ.",
+                career: "Công danh rạng rỡ, thi cử đỗ đạt, thăng quan tiến chức là những từ khóa dành cho bạn. Bạn sẽ đứng ở vị trí lãnh đạo hoặc là tâm điểm của sự chú ý trong tổ chức. Các ngành nghề về truyền thông, nghệ thuật, công nghệ, nhà hàng sẽ phát tài. Tiền tài đến nhanh nhưng đi cũng nhanh do tính phóng khoáng. Hãy tìm một người quản lý tài chính đáng tin cậy hoặc thiết lập kỷ luật tiết kiệm nghiêm ngặt.",
+                love_health: "Tình cảm mãnh liệt, nồng cháy. Bạn yêu và ghen tuông đều ở mức độ cao. Cẩn thận những xung đột không đáng có xuất phát từ sự nóng nảy của bản thân. Nếu kiểm soát tốt cảm xúc, gia đạo sẽ vô cùng rực rỡ và hạnh phúc. Về sức khỏe, Hỏa vượng cần chú ý đến tim mạch, huyết áp và hệ thần kinh. Tránh stress, nên uống nhiều trà thanh nhiệt và giữ cho tinh thần luôn thư thái."
+            },
+            "THỔ": {
+                poem: "Vững chãi như non, tựa bàn thạch<br>Trải bao sương gió vẫn quang vinh<br>Đất dày chở Đạo, ôm vạn vật<br>Năm nay phú quý tựa bình minh.",
+                general: "Mệnh Thổ tượng trưng cho đất mẹ bao dung, vững chãi, kiên nhẫn và đáng tin cậy. Năm 2026, Hỏa sinh Thổ, đây là một năm ĐẠI CÁT ĐẠI LỢI dành cho bạn. Mọi sự hỗ trợ, mọi nền tảng bạn đã xây dựng sẽ biến thành những giá trị thực tế và bền vững. Bạn như một mảnh đất màu mỡ được ánh mặt trời sưởi ấm, vạn vật sinh sôi. Sự điềm tĩnh của bạn chính là chìa khóa vàng mở ra kho báu.",
+                career: "Một năm cực kỳ thuận lợi cho việc mua bán bất động sản, tích lũy tài sản và đầu tư trung/dài hạn. Công việc ổn định, vững chắc và có sự tăng trưởng đều đặn. Bạn được cấp trên tin tưởng giao phó những trọng trách lớn lao nhờ vào tính cách cẩn trọng. Tài chính thặng dư mạnh, tiền bạc tích tụ thành núi. Lời khuyên: Đừng quá an toàn, đôi khi cần một chút liều lĩnh để tạo ra sự đột phá gấp số nhân.",
+                love_health: "Tình duyên đầm ấm, bền chặt. Những người mệnh Thổ thường có xu hướng hướng về gia đình. Năm nay, gia đạo bình an, vợ chồng hòa thuận, con cái hiếu thảo. Nếu đang độc thân, bạn sẽ tìm được một người chín chắn, điềm đạm để nương tựa cả đời. Sức khỏe cực tốt, chỉ cần lưu ý nhỏ về tỳ vị (dạ dày). Ăn uống đúng giờ, nhai kỹ, tránh suy nghĩ quá nhiều khi đang dùng bữa."
+            }
+        };
+
+        // DỮ LIỆU CUNG HOÀNG ĐẠO (ZODIAC)
+        const zodiacData = {
+            "Aries": { name: "BẠCH DƯƠNG (21/3 - 19/4)", text: "Năm 2026, ngọn lửa tiên phong của Bạch Dương sẽ bùng cháy. Bạn không ngại phá vỡ giới hạn. Cơ hội vàng đến vào tháng 4 và tháng 8. Hãy cứ dũng cảm tiến lên, vì vũ trụ đang bảo vệ bạn!" },
+            "Taurus": { name: "KIM NGƯU (20/4 - 20/5)", text: "Năm của sự giàu có và củng cố nền tảng. Kim Ngưu trong năm 2026 sẽ nhận được nhiều phần thưởng vật chất cho sự kiên trì của mình. Sao Mộc mang đến may mắn tuyệt đối về đất đai và tiền bạc." },
+            "Gemini": { name: "SONG TỬ (21/5 - 21/6)", text: "Một năm bùng nổ về giao tiếp và các mối quan hệ xã hội. Song Tử sẽ tỏa sáng với những ý tưởng đột phá. Tháng 6 sẽ đánh dấu một bước ngoặt thay đổi hoàn toàn cục diện sự nghiệp của bạn." },
+            "Cancer": { name: "CỰ GIẢI (22/6 - 22/7)", text: "Năm 2026 mang đến sự chữa lành và bình yên sâu thẳm. Cự Giải sẽ có cơ hội củng cố tổ ấm. Trực giác của bạn cực kỳ nhạy bén, giúp bạn đưa ra những quyết định đầu tư vô cùng chuẩn xác." },
+            "Leo": { name: "SƯ TỬ (23/7 - 22/8)", text: "Ngôi sao rực rỡ nhất bầu trời 2026! Sư Tử sẽ lấy lại vị thế đế vương của mình. Danh tiếng, địa vị và tình yêu đều thăng hoa. Hãy chuẩn bị bước lên bục vinh quang mà bạn xứng đáng." },
+            "Virgo": { name: "XỬ NỮ (23/8 - 22/9)", text: "Năm của sự hoàn thiện và tinh lọc. Sự tỉ mỉ của Xử Nữ sẽ được đền đáp bằng những hợp đồng lớn và sự nể trọng từ đối tác. Đây là năm bạn tối ưu hóa mọi khía cạnh của cuộc sống để đạt đỉnh cao." },
+            "Libra": { name: "THIÊN BÌNH (23/9 - 23/10)", text: "Cân bằng và hài hòa. Thiên Bình sẽ trải qua một năm ngập tràn tình yêu và nghệ thuật. Bạn trở thành thỏi nam châm thu hút quý nhân. Các vụ kiện cáo hoặc tranh chấp (nếu có) đều sẽ thắng lợi." },
+            "Scorpio": { name: "THIÊN YẾT (24/10 - 22/11)", text: "Sự lột xác mạnh mẽ! Như phượng hoàng tái sinh từ đống tro tàn, Thiên Yết năm 2026 sẽ rũ bỏ những điều cũ kỹ để đón nhận sức mạnh vô song. Tài chính bí mật và các khoản thừa kế/thưởng lớn sẽ xuất hiện." },
+            "Sagittarius": { name: "NHÂN MÃ (23/11 - 21/12)", text: "Chuyến phiêu lưu vĩ đại nhất đang chờ đón. Năm 2026 mở ra cánh cửa xuất ngoại, học vấn cao hoặc những dự án mang tầm vóc quốc tế. Không gì có thể trói buộc bước chân khao khát tự do của bạn." },
+            "Capricorn": { name: "MA KẾT (22/12 - 19/1)", text: "Kiến trúc sư của những giấc mơ. Ma Kết sẽ gặt hái thành quả khổng lồ sau nhiều năm gieo hạt. Sự nghiệp bước lên một nấc thang quyền lực mới. Một năm cực kỳ viên mãn về danh vọng." },
+            "Aquarius": { name: "BẢO BÌNH (20/1 - 18/2)", text: "Đột phá và cách mạng. Bảo Bình trong năm 2026 sẽ dẫn đầu những xu hướng mới. Mạng lưới bạn bè và cộng đồng sẽ mang lại cho bạn sự giàu có bất ngờ. Hãy tin vào tầm nhìn độc đáo của mình." },
+            "Pisces": { name: "SONG NGƯ (19/2 - 20/3)", text: "Năm của phép màu và tâm linh. Song Ngư sẽ hiện thực hóa được những ước mơ lãng mạn nhất. Năng lực sáng tạo vô hạn giúp bạn thành công vang dội trong lĩnh vực nghệ thuật hoặc chữa lành." }
+        };
+
+        // ==========================================
+        // PHẦN 2: THUẬT TOÁN TÍNH TOÁN (LOGIC)
+        // ==========================================
+
+        // 1. Tính Mệnh Ngũ Hành dựa trên Năm Sinh (Quy tắc Can Chi)
+        function calculateElement(year) {
+            // Tính Can: Giáp/Ất (1), Bính/Đinh (2), Mậu/Kỷ (3), Canh/Tân (4), Nhâm/Quý (5)
+            // Năm có chữ số cuối: 4,5 (Giáp, Ất); 6,7 (Bính, Đinh); 8,9 (Mậu, Kỷ); 0,1 (Canh, Tân); 2,3 (Nhâm, Quý)
+            let lastDigit = year % 10;
+            let canValue = 0;
+            if (lastDigit == 4 || lastDigit == 5) canValue = 1;
+            else if (lastDigit == 6 || lastDigit == 7) canValue = 2;
+            else if (lastDigit == 8 || lastDigit == 9) canValue = 3;
+            else if (lastDigit == 0 || lastDigit == 1) canValue = 4;
+            else if (lastDigit == 2 || lastDigit == 3) canValue = 5;
+
+            // Tính Chi: Tý/Sửu/Ngọ/Mùi (0), Dần/Mão/Thân/Dậu (1), Thìn/Tỵ/Tuất/Hợi (2)
+            // Lấy năm chia lấy dư cho 12. 
+            // 4: Tý, 5: Sửu, 6: Dần, 7: Mão, 8: Thìn, 9: Tỵ, 10: Ngọ, 11: Mùi, 0: Thân, 1: Dậu, 2: Tuất, 3: Hợi
+            let chiRemainder = year % 12;
+            let chiValue = 0;
+            if ([4, 5, 10, 11].includes(chiRemainder)) chiValue = 0;
+            else if ([6, 7, 0, 1].includes(chiRemainder)) chiValue = 1;
+            else if ([8, 9, 2, 3].includes(chiRemainder)) chiValue = 2;
+
+            // Tính Mệnh = Can + Chi (Nếu > 5 thì trừ đi 5)
+            let menhValue = canValue + chiValue;
+            if (menhValue > 5) menhValue -= 5;
+
+            // 1: Kim, 2: Thủy, 3: Hỏa, 4: Thổ, 5: Mộc
+            const elements = ["", "KIM", "THỦY", "HỎA", "THỔ", "MỘC"];
+            return elements[menhValue];
+        }
+
+        // 2. Tính Cung Hoàng Đạo dựa trên Ngày Tháng
+        function calculateZodiac(day, month) {
+            if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return "Aries";
+            if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return "Taurus";
+            if ((month == 5 && day >= 21) || (month == 6 && day <= 21)) return "Gemini";
+            if ((month == 6 && day >= 22) || (month == 7 && day <= 22)) return "Cancer";
+            if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return "Leo";
+            if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return "Virgo";
+            if ((month == 9 && day >= 23) || (month == 10 && day <= 23)) return "Libra";
+            if ((month == 10 && day >= 24) || (month == 11 && day <= 22)) return "Scorpio";
+            if ((month == 11 && day >= 23) || (month == 12 && day <= 21)) return "Sagittarius";
+            if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) return "Capricorn";
+            if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) return "Aquarius";
+            if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) return "Pisces";
+            return "Aries"; // Default fallback
+        }
+
+        // ==========================================
+        // PHẦN 3: ENGINE GIAO DIỆN & HIỆU ỨNG VẬT LÝ
+        // ==========================================
+
+        // --- BACKGROUND STARS ---
+        function createStars() {
+            const starContainer = document.getElementById('stars');
+            for (let i = 0; i < 150; i++) {
+                let star = document.createElement('div');
+                star.style.position = 'absolute';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.background = '#fff';
+                star.style.borderRadius = '50%';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.opacity = Math.random();
+                star.style.animation = `twinkle ${Math.random() * 3 + 1}s infinite alternate`;
+                starContainer.appendChild(star);
+            }
+        }
+        createStars();
+
+        // --- FIREWORKS SYSTEM (TỐI ƯU HÓA) ---
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -262,91 +519,58 @@
 
         let fireworks = [];
         let particles = [];
-
-        // Hàm tạo màu ngẫu nhiên rực rỡ
-        function randomColor() {
-            const colors = [
-                '#ff0000', '#ffd700', '#ff00ff', '#00ff00', '#00ffff', '#ffffff', 
-                '#ff4500', '#7fff00', '#1e90ff'
-            ];
-            return colors[Math.floor(Math.random() * colors.length)];
-        }
+        let isSimulating = false;
 
         class Firework {
             constructor(sx, sy, tx, ty) {
-                this.x = sx;
-                this.y = sy;
-                this.sx = sx;
-                this.sy = sy;
-                this.tx = tx;
-                this.ty = ty;
+                this.x = sx; this.y = sy;
+                this.tx = tx; this.ty = ty;
                 this.distanceToTarget = Math.sqrt(Math.pow(tx - sx, 2) + Math.pow(ty - sy, 2));
                 this.distanceTraveled = 0;
                 this.coordinates = [];
-                this.coordinateCount = 3;
-                while (this.coordinateCount--) {
-                    this.coordinates.push([this.x, this.y]);
-                }
+                for(let i=0; i<3; i++) this.coordinates.push([this.x, this.y]);
                 this.angle = Math.atan2(ty - sy, tx - sx);
                 this.speed = 2;
                 this.acceleration = 1.05;
-                this.brightness = Math.random() * 50 + 50;
-                this.targetRadius = 1;
-                this.color = randomColor();
+                this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
             }
-
             update(index) {
                 this.coordinates.pop();
                 this.coordinates.unshift([this.x, this.y]);
-
-                if (this.targetRadius < 8) this.targetRadius += 0.3;
-                else this.targetRadius = 1;
-
                 this.speed *= this.acceleration;
-                const vx = Math.cos(this.angle) * this.speed;
-                const vy = Math.sin(this.angle) * this.speed;
+                let vx = Math.cos(this.angle) * this.speed;
+                let vy = Math.sin(this.angle) * this.speed;
+                this.distanceTraveled = Math.sqrt(Math.pow(this.x - this.coordinates[this.coordinates.length-1][0], 2) + Math.pow(this.y - this.coordinates[this.coordinates.length-1][1], 2));
                 
-                this.distanceTraveled = Math.sqrt(Math.pow(this.x - this.sx, 2) + Math.pow(this.y - this.sy, 2));
+                let distTotal = Math.sqrt(Math.pow(this.x - this.tx, 2) + Math.pow(this.y - this.ty, 2));
 
-                if (this.distanceTraveled >= this.distanceToTarget) {
+                if (distTotal <= this.speed) {
                     createParticles(this.tx, this.ty, this.color);
                     fireworks.splice(index, 1);
                 } else {
-                    this.x += vx;
-                    this.y += vy;
+                    this.x += vx; this.y += vy;
                 }
             }
-
             draw() {
                 ctx.beginPath();
                 ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
                 ctx.lineTo(this.x, this.y);
-                ctx.strokeStyle = this.color;
-                ctx.lineWidth = 3; // Đuôi pháo hoa dày hơn
-                ctx.stroke();
+                ctx.strokeStyle = this.color; ctx.lineWidth = 3; ctx.stroke();
             }
         }
 
         class Particle {
             constructor(x, y, color) {
-                this.x = x;
-                this.y = y;
+                this.x = x; this.y = y;
                 this.coordinates = [];
-                this.coordinateCount = 5;
-                while (this.coordinateCount--) {
-                    this.coordinates.push([this.x, this.y]);
-                }
+                for(let i=0; i<5; i++) this.coordinates.push([this.x, this.y]);
                 this.angle = Math.random() * Math.PI * 2;
                 this.speed = Math.random() * 10 + 1;
-                this.friction = 0.95;
-                this.gravity = 1;
-                this.hue = Math.random() * 360;
-                this.brightness = Math.random() * 50 + 50;
+                this.friction = 0.95; this.gravity = 1;
                 this.alpha = 1;
                 this.decay = Math.random() * 0.015 + 0.015;
-                this.baseColor = color;
+                this.color = color;
             }
-
             update(index) {
                 this.coordinates.pop();
                 this.coordinates.unshift([this.x, this.y]);
@@ -354,170 +578,195 @@
                 this.x += Math.cos(this.angle) * this.speed;
                 this.y += Math.sin(this.angle) * this.speed + this.gravity;
                 this.alpha -= this.decay;
-
-                if (this.alpha <= this.decay) {
-                    particles.splice(index, 1);
-                }
+                if (this.alpha <= this.decay) particles.splice(index, 1);
             }
-
             draw() {
                 ctx.beginPath();
                 ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
                 ctx.lineTo(this.x, this.y);
-                // Hiệu ứng màu lấp lánh
-                ctx.strokeStyle = `hsla(${this.hue}, 100%, ${this.brightness}%, ${this.alpha})`;
-                ctx.lineWidth = 2;
-                ctx.stroke();
+                ctx.strokeStyle = this.color.replace('hsl', 'hsla').replace(')', `, ${this.alpha})`);
+                ctx.lineWidth = 2; ctx.stroke();
             }
         }
 
         function createParticles(x, y, color) {
-            let particleCount = 150; // Số lượng hạt nổ nhiều hơn
-            while (particleCount--) {
-                particles.push(new Particle(x, y, color));
-            }
+            for (let i = 0; i < 100; i++) particles.push(new Particle(x, y, color));
         }
 
         function loop() {
+            if(!isSimulating) return;
             requestAnimationFrame(loop);
-            // Tạo hiệu ứng đuôi mờ (motion trail)
             ctx.globalCompositeOperation = 'destination-out';
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; 
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.globalCompositeOperation = 'lighter';
 
-            let i = fireworks.length;
-            while (i--) {
-                fireworks[i].draw();
-                fireworks[i].update(i);
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                fireworks[i].draw(); fireworks[i].update(i);
+            }
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].draw(); particles[i].update(i);
             }
 
-            let j = particles.length;
-            while (j--) {
-                particles[j].draw();
-                particles[j].update(j);
-            }
-
-            // Tự động bắn pháo hoa ngẫu nhiên
-            if (activeFireworks) {
-                if (Math.random() < 0.08) { // Tốc độ bắn nhanh
-                    let sx = Math.random() * canvas.width;
-                    let sy = canvas.height;
-                    let tx = Math.random() * canvas.width;
-                    let ty = Math.random() * (canvas.height / 2);
-                    fireworks.push(new Firework(sx, sy, tx, ty));
-                }
+            if (Math.random() < 0.05) {
+                fireworks.push(new Firework(
+                    canvas.width / 2, canvas.height,
+                    Math.random() * canvas.width, Math.random() * (canvas.height / 2)
+                ));
             }
         }
 
-        let activeFireworks = false; // Chỉ bắn khi bắt đầu
-        loop();
+        // ==========================================
+        // PHẦN 4: LOGIC ĐIỀU KHIỂN CHÍNH
+        // ==========================================
 
-        // --- 2. LOGIC TÍNH MỆNH & LỜI CHÚC VIP ---
-        
-        // Data lời chúc theo Mệnh
-        const wishesDB = {
-            "KIM": "Năm 2026 mệnh Kim của bạn sẽ tỏa sáng rực rỡ. Tiền vào như nước, vàng bạc đầy kho. Những dự án đầu tư sẽ sinh lời gấp bội. Hãy giữ cái đầu lạnh và trái tim nóng!",
-            "MỘC": "Như cây đại thụ giữa rừng già, năm Bính Ngọ sự nghiệp của bạn sẽ phát triển vững chãi, vươn cao. Quý nhân phù trợ, sức khỏe dồi dào, gia đạo xanh tươi hạnh phúc.",
-            "THỦY": "Năm nay tài lộc của bạn sẽ trôi chảy, linh hoạt như dòng nước lớn. Mọi khó khăn đều bị cuốn trôi, mở đường cho những cơ hội thăng tiến bất ngờ và tình duyên thắm thiết.",
-            "HỎA": "Một năm rực lửa đam mê! Năng lượng của bạn sẽ thiêu đốt mọi rào cản. Danh tiếng vang xa, công danh rạng rỡ. Bạn sẽ là ngôi sao sáng nhất trong lĩnh vực của mình.",
-            "THỔ": "Vững như bàn thạch! Năm 2026 là năm bạn tích lũy tài sản cực lớn. Đất sinh ra vàng, mọi sự kiên trì của bạn sẽ đơm hoa kết trái. Một năm an yên và thịnh vượng."
-        };
-
-        const generalWishes = [
-            "Năm Bính Ngọ - Mã Đáo Thành Công! Chúc bạn bứt phá mọi giới hạn.",
-            "2026 rực rỡ! Chúc bạn một năm sức khỏe vô địch, tiền tài vô biên.",
-            "Chúc mừng năm mới! Tấn tài tấn lộc, vạn sự như ý."
-        ];
-
-        function getElement(year) {
-            // Công thức tính mệnh đơn giản (Can + Chi)
-            // Can: lấy số cuối năm sinh. Chi: lấy năm sinh chia dư 12
-            // Quy ước đơn giản cho code ngắn gọn (dựa trên Thiên Can)
-            const can = year % 10;
-            // Map tương đối số cuối năm sinh ra ngũ hành (Mẹo phong thủy nhanh)
-            // 4,5: Hỏa | 6,7: Thổ | 8,9: Kim | 0,1: Kim/Thủy | 2,3: Thủy/Mộc
-            // Để chính xác và đơn giản cho game vui, ta dùng mảng map fixed:
-            const elements = [
-                "KIM", "KIM", "THỦY", "THỦY", "HỎA", 
-                "HỎA", "THỔ", "THỔ", "MỘC", "MỘC"
+        // Tạo mảng chi tiết 12 tháng ngẫu nhiên nhưng theo quy luật chung
+        function generateMonths() {
+            const statuses = [
+                "Đại cát đại lợi, tiền vô như nước.", "Có quý nhân phù trợ, công việc thuận lợi.", 
+                "Cần chú ý sức khỏe, tránh làm việc quá sức.", "Tình cảm thăng hoa, hạnh phúc viên mãn.",
+                "Tháng bản lề, chuẩn bị cho bước tiến lớn.", "Tài lộc rủng rỉnh, đầu tư sinh lời nhanh.",
+                "Cẩn thận lời ăn tiếng nói kẻo thị phi.", "Tin vui từ xa đưa tới, gia đạo bình an.",
+                "Đột phá sự nghiệp, được cấp trên khen thưởng.", "Tháng của sự nghỉ ngơi, tái tạo năng lượng.",
+                "Thu hoạch lớn từ những nỗ lực trước đó.", "Bất ngờ nhận được lộc trời cho."
             ];
-            // Lưu ý: Đây là map đơn giản hóa theo Can để demo.
-            // Nếu muốn chính xác 100% nạp âm cần thuật toán dài hơn.
-            // Ở đây dùng thuật toán Random có trọng số dựa trên Can để tạo bất ngờ.
-            return elements[can];
+            // Xáo trộn mảng
+            for (let i = statuses.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [statuses[i], statuses[j]] = [statuses[j], statuses[i]];
+            }
+            
+            let html = '<div class="month-grid">';
+            for(let i=1; i<=12; i++) {
+                html += `
+                    <div class="month-card">
+                        <h4>Tháng ${i}/2026</h4>
+                        <p>${statuses[i-1]}</p>
+                    </div>
+                `;
+            }
+            html += '</div>';
+            return html;
         }
 
-        function typeWriter(text, i, fnCallback) {
-            if (i < text.length) {
-                document.getElementById("typewriter-text").innerHTML = text.substring(0, i+1) + '<span aria-hidden="true">|</span>';
-                setTimeout(function() {
-                    typeWriter(text, i + 1, fnCallback)
-                }, 30); // Tốc độ gõ chữ
-            } else if (typeof fnCallback == 'function') {
-                fnCallback();
-            }
+        // Hiển thị nội dung từng phần (Fade in sequence)
+        function renderContentSequentially(htmlBlocks) {
+            const wrapper = document.getElementById('content-wrapper');
+            wrapper.innerHTML = '';
+            
+            htmlBlocks.forEach((blockHtml, index) => {
+                const div = document.createElement('div');
+                div.className = 'content-section';
+                div.innerHTML = blockHtml;
+                wrapper.appendChild(div);
+
+                // Delay hiển thị từng phần để người dùng đọc dần
+                setTimeout(() => {
+                    div.classList.add('visible');
+                    // Tự động cuộn xuống phần mới
+                    const scrollBox = document.getElementById('scroll-box');
+                    scrollBox.scrollTo({
+                        top: scrollBox.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }, index * 2500); // Mỗi đoạn cách nhau 2.5s
+            });
         }
 
         function startExperience() {
-            const name = document.getElementById('userName').value || "Người Bí Ẩn";
-            const year = document.getElementById('birthYear').value;
+            const nameInput = document.getElementById('userName').value.trim();
+            const dateInput = document.getElementById('birthDate').value;
 
-            if (!year) {
-                alert("Vui lòng nhập năm sinh để thầy AI gieo quẻ!");
+            if (!dateInput) {
+                alert("Bạn phải chọn Ngày/Tháng/Năm Sinh để tôi gieo quẻ nhé!");
                 return;
             }
 
-            // 1. Ẩn màn hình chào
+            const name = nameInput || "Quý Khách";
+            const birthDateObj = new Date(dateInput);
+            const day = birthDateObj.getDate();
+            const month = birthDateObj.getMonth() + 1;
+            const year = birthDateObj.getFullYear();
+
+            // Tính toán
+            const element = calculateElement(year);
+            const zodiacKey = calculateZodiac(day, month);
+            
+            const elData = elementData[element];
+            const zoData = zodiacData[zodiacKey];
+
+            // 1. Chuyển cảnh
             const welcomeScreen = document.getElementById('welcome-screen');
             welcomeScreen.style.opacity = '0';
-            setTimeout(() => { welcomeScreen.style.display = 'none'; }, 1000);
-
-            // 2. Hiện màn hình chính
-            const mainScreen = document.getElementById('main-screen');
-            mainScreen.style.display = 'block';
-
-            // 3. Kích hoạt pháo hoa
-            activeFireworks = true;
-            
-            // Bắn một loạt pháo hoa mở màn
-            for(let k=0; k<10; k++) {
-                setTimeout(() => {
-                    fireworks.push(new Firework(
-                        Math.random() * canvas.width, 
-                        canvas.height, 
-                        Math.random() * canvas.width, 
-                        Math.random() * (canvas.height/2)
-                    ));
-                }, k * 200);
-            }
-
-            // 4. Xử lý nội dung
-            document.getElementById('display-name').innerText = `Chúc Mừng ${name}`;
-            
-            const element = getElement(parseInt(year));
-            document.getElementById('display-element').innerText = `BẢN MỆNH: ${element}`;
-            
-            // Chọn lời chúc
-            let wish = "";
-            if (wishesDB[element]) {
-                wish = wishesDB[element];
-            } else {
-                wish = generalWishes[Math.floor(Math.random() * generalWishes.length)];
-            }
-
-            // Chạy hiệu ứng gõ chữ
-            setTimeout(() => {
-                typeWriter(wish, 0);
+            setTimeout(() => { 
+                welcomeScreen.style.display = 'none'; 
+                document.getElementById('main-screen').style.display = 'flex';
+                isSimulating = true;
+                loop(); // Bật pháo hoa
             }, 1000);
+
+            // 2. Điền thông tin Header
+            document.getElementById('display-name').innerText = `Kính Chào,\n${name}`;
+            document.getElementById('display-element').innerText = `MỆNH: ${element}`;
+            document.getElementById('display-zodiac').innerText = `CUNG: ${zoData.name}`;
+
+            // 3. Chuẩn bị các khối nội dung (Tạo ra hơn 100 dòng text dài)
+            const blocks = [];
+
+            // Block 1: Thơ
+            blocks.push(`
+                <div class="poem">
+                    "Chào đón Bính Ngọ hai không hai sáu,<br>
+                    Cửa nhà rực rỡ, phước lộc tràn đầy."<br><br>
+                    ${elData.poem}
+                </div>
+            `);
+
+            // Block 2: Tổng quan Ngũ Hành
+            blocks.push(`
+                <h3 class="section-title">I. BẢN MỆNH CỐT LÕI (${element})</h3>
+                <p class="paragraph"><span class="highlight">Thiên Cơ Lộ Diện:</span> ${elData.general}</p>
+                <p class="paragraph"><span class="highlight">Công Danh Tài Lộc:</span> ${elData.career}</p>
+                <p class="paragraph"><span class="highlight">Tình Duyên Gia Đạo:</span> ${elData.love_health}</p>
+            `);
+
+            // Block 3: Cung Hoàng Đạo chiếu mệnh
+            blocks.push(`
+                <h3 class="section-title zodiac-title">II. VÌ SAO CHIẾU MỆNH (${zoData.name})</h3>
+                <p class="paragraph"><span class="highlight">Thông điệp Vũ Trụ:</span> ${zoData.text}</p>
+                <p class="paragraph">Sự kết hợp giữa năng lượng chiêm tinh phương Tây và ngũ hành phương Đông cho thấy năm 2026 của bạn là một bức tranh đa sắc. Hãy tận dụng tối đa thế mạnh của cung hoàng đạo để hóa giải những trở ngại của bản mệnh.</p>
+            `);
+
+            // Block 4: Lời khuyên Phong Thủy
+            blocks.push(`
+                <h3 class="section-title">III. MẬT MÃ PHONG THỦY 2026</h3>
+                <p class="paragraph">- <span class="highlight">Con số tài lộc:</span> ${Math.floor(Math.random() * 99)}, ${Math.floor(Math.random() * 99) + 10}, 86, 68.</p>
+                <p class="paragraph">- <span class="highlight">Màu sắc thu hút năng lượng:</span> Vàng Gold, Đỏ Ruby, và Trắng Ngọc Trai.</p>
+                <p class="paragraph">- <span class="highlight">Ngày khai trương/xuất hành tốt:</span> Mùng 4, Mùng 8, Mùng 10 Âm Lịch.</p>
+            `);
+
+            // Block 5: Chi tiết 12 tháng
+            blocks.push(`
+                <h3 class="section-title">IV. BÁT TỰ TỪNG THÁNG TRONG NĂM</h3>
+                <p class="paragraph">Bánh xe thời gian xoay chuyển, dưới đây là dự đoán diễn biến từng tháng giúp bạn nắm bắt cát hung, tiến thoái hợp lý:</p>
+                ${generateMonths()}
+                <br>
+                <p class="paragraph" style="text-align:center; color: var(--gold); font-weight:bold; font-size:1.2rem; margin-top:20px;">
+                    ✨ CHÚC BẠN MỘT NĂM 2026 ĐẠI THÀNH CÔNG! ✨
+                </p>
+            `);
+
+            // Khởi chạy hiệu ứng in chữ
+            setTimeout(() => {
+                renderContentSequentially(blocks);
+            }, 1500);
         }
 
-        // Resize canvas
+        // Resize Fix
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
-
     </script>
 </body>
 </html>
