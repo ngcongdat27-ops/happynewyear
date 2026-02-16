@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy New Year 2026 - Xuân Bính Ngọ VIP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CẤU HÌNH CƠ BẢN & BIẾN MÀU SẮC --- */
+        :root {
+            --primary-gold: #FFD700;
+            --secondary-gold: #FDB931;
+            --deep-red: #800000;
+            --bright-red: #FF0000;
+            --bg-dark: #050505;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-glow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* --- CANVAS PHÁO HOA --- */
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* --- LỚP PHỦ NỀN (VINTAGE PATTERN) --- */
+        .overlay-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* --- CONTAINER CHÍNH --- */
+        .container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* --- TIÊU ĐỀ GLITCH & GLOW --- */
+        h1.main-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5rem;
+            background: linear-gradient(to bottom, var(--primary-gold), var(--secondary-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--text-glow);
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .year-2026 {
+            font-size: 8rem;
+            font-weight: 900;
+            letter-spacing: 10px;
+            color: transparent;
+            -webkit-text-stroke: 2px var(--primary-gold);
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .year-2026::before {
+            content: "2026";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            color: var(--primary-gold);
+            opacity: 0.3;
+            filter: blur(10px);
+            animation: pulse 2s infinite;
+        }
+
+        .sub-title {
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #ddd;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--primary-gold);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        /* --- ĐỒNG HỒ ĐẾM NGƯỢC --- */
+        .countdown-box {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .time-segment {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 100px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .time-segment:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-gold);
+        }
+
+        .time-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary-gold);
+            display: block;
+        }
+
+        .time-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: #ccc;
+        }
+
+        /* --- CARD LỜI CHÚC (FLIP EFFECT) --- */
+        .wishes-area {
+            perspective: 1000px;
+            margin-top: 30px;
+        }
+
+        .lucky-card {
+            width: 350px;
+            height: 200px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+            cursor: pointer;
+        }
+
+        .lucky-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            border: 2px solid var(--primary-gold);
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, var(--deep-red), #4a0000);
+            flex-direction: column;
+        }
+
+        .card-back {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--deep-red);
+            transform: rotateY(180deg);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            animation: shake 2s infinite;
+        }
+
+        .tap-hint {
+            font-size: 0.8rem;
+            margin-top: 10px;
+            opacity: 0.8;
+            animation: blink 1.5s infinite;
+        }
+
+        .wish-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        /* --- NÚT BẤM & TƯƠNG TÁC --- */
+        .btn-music {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-gold);
+            border: none;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px var(--primary-gold);
+            animation: spin 10s linear infinite;
+        }
+
+        .btn-reload {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background: transparent;
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-reload:hover {
+            background: var(--primary-gold);
+            color: var(--deep-red);
+            box-shadow: 0 0 20px var(--primary-gold);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+            100% { transform: rotate(0deg); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            h1.main-title { font-size: 3rem; }
+            .year-2026 { font-size: 5rem; }
+            .countdown-box { gap: 10px; }
+            .time-segment { min-width: 70px; padding: 10px; }
+            .time-value { font-size: 1.5rem; }
+            .lucky-card { width: 90%; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas"></canvas>
+    <div class="overlay-pattern"></div>
+
+    <div class="container">
+        <h1 class="main-title">Chúc Mừng Năm Mới</h1>
+        <div class="year-2026">2026</div>
+        <div class="sub-title">Xuân Bính Ngọ - Mã Đáo Thành Công</div>
+
+        <div class="countdown-box">
+            <div class="time-segment">
+                <span class="time-value" id="days">00</span>
+                <span class="time-label">Ngày</span>
+            </div>
+            <div class="time-segment">
+                <span class="time-value" id="hours">00</span>
+                <span class="time-label">Giờ</span>
+            </div>
+            <div class="time-segment">
+                <span class="time-value" id="minutes">00</span>
+                <span class="time-label">Phút</span>
+            </div>
+            <div class="time-segment">
+                <span class="time-value" id="seconds">00</span>
+                <span class="time-label">Giây</span>
+            </div>
+        </div>
+
+        <div class="wishes-area">
+            <div class="lucky-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-face card-front">
+                    <div class="card-icon">🧧</div>
+                    <h3>Lì Xì May Mắn</h3>
+                    <p class="tap-hint">(Chạm để mở)</p>
+                </div>
+                <div class="card-face card-back">
+                    <p class="wish-text" id="wish-content">Chúc bạn 12 tháng phú quý, 365 ngày phát tài, 8760 giờ sung túc, 525600 phút thành công!</p>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-reload" onclick="changeWish()">🎉 Xin lời chúc khác</button>
+
+        <footer>
+            <p style="margin-top: 50px; font-size: 0.8rem; opacity: 0.6;">Designed by Gemini AI</p>
+        </footer>
+    </div>
+
+    <button class="btn-music" onclick="toggleMusic()">🎵</button>
+
+    <script>
+        // --- 1. LOGIC ĐẾM NGƯỢC (TẾT BÍNH NGỌ - 17/02/2026) ---
+        const tetDate = new Date("Feb 17, 2026 00:00:00").getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = tetDate - now;
+
+            if (distance < 0) {
+                document.querySelector('.countdown-box').innerHTML = "<h2 style='color:var(--primary-gold); font-size:2rem;'>CHÚC MỪNG NĂM MỚI!</h2>";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days < 10 ? "0" + days : days;
+            document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
+            document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+            document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+        }
+        setInterval(updateCountdown, 1000);
+
+        // --- 2. LOGIC LỜI CHÚC NGẪU NHIÊN ---
+        const wishes = [
+            "Năm mới Bính Ngọ: Tiền vào như nước sông Đà, tiền ra nhỏ giọt như cà phê phin.",
+            "Chúc bạn: Đa lộc, đa tài, đa phú quý. Đắc thời, đắc lợi, đắc nhân tâm.",
+            "Năm Ngựa phi nước đại, chúc bạn sự nghiệp thăng tiến thần tốc, sức khỏe dẻo dai như ngựa chiến.",
+            "Mừng xuân 2026! Chúc gia đình hạnh phúc, an khang thịnh vượng, vạn sự như ý.",
+            "Sang năm mới chúc bạn: Đau đầu vì nhà giàu. Mệt mỏi vì học giỏi. Buồn phiền vì nhiều tiền.",
+            "Năm mới chúc nhau sức khỏe nhiều. Bạc tiền rủng rỉnh thoải mái tiêu.",
+            "Cung chúc tân xuân - Vạn sự như ý - Tỷ sự như mơ - Triệu triệu bất ngờ.",
+            "Chúc bạn năm mới: 1 vợ, 2 con, nhà 3 tầng, xe 4 bánh, du lịch 5 châu."
+        ];
+
+        function changeWish() {
+            const card = document.querySelector('.lucky-card');
+            // Lật lại mặt trước
+            if (card.classList.contains('flipped')) {
+                card.classList.remove('flipped');
+                setTimeout(() => {
+                    const randomWish = wishes[Math.floor(Math.random() * wishes.length)];
+                    document.getElementById('wish-content').innerText = randomWish;
+                }, 300); // Đợi thẻ đóng lại mới đổi chữ
+            } else {
+                const randomWish = wishes[Math.floor(Math.random() * wishes.length)];
+                document.getElementById('wish-content').innerText = randomWish;
+                card.classList.add('flipped');
+            }
+        }
+
+        // --- 3. HIỆU ỨNG PHÁO HOA (CANVAS VIP) ---
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        
+        class Particle {
+            constructor(x, y, color, velocity) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = velocity;
+                this.alpha = 1;
+                this.friction = 0.96;
+                this.gravity = 0.05;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                this.velocity.y += this.gravity;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.01;
+            }
+        }
+
+        function createFirework(x, y) {
+            const particleCount = 100;
+            const angleIncrement = (Math.PI * 2) / particleCount;
+            const colors = ['#FFD700', '#FF0000', '#00FF00', '#00FFFF', '#FF00FF'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            for (let i = 0; i < particleCount; i++) {
+                const velocity = {
+                    x: Math.cos(angleIncrement * i) * (Math.random() * 5),
+                    y: Math.sin(angleIncrement * i) * (Math.random() * 5)
+                };
+                particles.push(new Particle(x, y, color, velocity));
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.1)'; // Tạo hiệu ứng đuôi mờ
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((particle, index) => {
+                if (particle.alpha > 0) {
+                    particle.update();
+                    particle.draw();
+                } else {
+                    particles.splice(index, 1);
+                }
+            });
+
+            // Tự động bắn pháo hoa ngẫu nhiên
+            if (Math.random() < 0.03) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height / 2;
+                createFirework(x, y);
+            }
+        }
+
+        // Click chuột để bắn pháo hoa
+        window.addEventListener('click', (e) => {
+            // Tránh bắn khi click vào card
+            if(!e.target.closest('.lucky-card') && !e.target.closest('button')) {
+                createFirework(e.clientX, e.clientY);
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        animate();
+
+        // --- 4. ÂM NHẠC (Giả lập) ---
+        let isPlaying = false;
+        function toggleMusic() {
+            const btn = document.querySelector('.btn-music');
+            if (isPlaying) {
+                btn.style.animationPlayState = 'paused';
+                alert("Đã tạm dừng nhạc (Đây là demo, bạn cần file mp3 thật để chạy!)");
+            } else {
+                btn.style.animationPlayState = 'running';
+                // Để thêm nhạc thật, bỏ comment dòng dưới và thêm file nhạc:
+                // var audio = new Audio('happy-new-year.mp3'); audio.play();
+                alert("Đang phát: Happy New Year (ABBA) - Remix VIP");
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // --- 5. HIỆU ỨNG SAO RƠI (CSS + JS) ---
+        function createStars() {
+            const count = 50;
+            for(let i=0; i<count; i++) {
+                let star = document.createElement('div');
+                star.style.position = 'absolute';
+                star.style.width = '2px';
+                star.style.height = '2px';
+                star.style.background = 'white';
+                star.style.left = Math.random() * window.innerWidth + 'px';
+                star.style.top = Math.random() * window.innerHeight + 'px';
+                star.style.animation = `blink ${Math.random() * 3 + 1}s infinite`;
+                star.style.zIndex = '0';
+                document.body.appendChild(star);
+            }
+        }
+        createStars();
+
+    </script>
+</body>
+</html>
